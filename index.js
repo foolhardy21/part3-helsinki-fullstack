@@ -3,7 +3,7 @@ const app = express()
 
 let persons = [
   {
-      "name": "Arto Hellas",
+      "name": "Arti Hellas",
       "number": "040-44-1234567",
       "id": 1
     },
