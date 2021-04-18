@@ -1,17 +1,11 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 
 const app = express()
 app.use(express.json())
+app.use(cors())
 
-/*const requestLogger = (request,response,next) => {
-  console.log(request.method)
-  console.log(request.path)
-  console.log(request.body)
-  next()
-}
-app.use(requestLogger)
-*/
 morgan.token('post',(req,res) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post'))
 
@@ -35,6 +29,11 @@ let persons = [
       "name": "Emmanuel Skarsgard",
       "number": "067-98-1234567",
       "id": 4
+    },
+    {
+      "name": "Harry Portman",
+      "number": "067-98-198567",
+      "id": 5
     }
 ]
 
@@ -60,13 +59,13 @@ app.get('/api/persons/:id',(request,response) => {
   }
 })
 
-app.delete('/delete/persons/:id',(request,response) => {
+app.delete('/api/persons/:id',(request,response) => {
   const id = Number(request.params.id)
   persons = persons.filter(person => person.id !== id)
   response.status(204).end()
 })
 
-app.post('/api/postperson',(request,response) => {
+app.post('/api/persons',(request,response) => {
   const id = Math.floor(Math.random()*1000)
   const person = request.body
   if(!person)
@@ -77,7 +76,7 @@ app.post('/api/postperson',(request,response) => {
   }
   if(person.name === "" || person. number === "")
   {
-    return response.status(400).json({
+    return response.status(404).json({
       error: 'data missing'
     })
   }
@@ -96,7 +95,7 @@ app.post('/api/postperson',(request,response) => {
   response.json(note)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT,() => {
   console.log(`Server running on port ${PORT}`)
 })
