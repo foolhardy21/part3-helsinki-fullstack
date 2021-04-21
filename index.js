@@ -1,8 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
-require('dotenv').config()
+const Person = require('./modules/person')
 
 const app = express()
 app.use(express.json())
@@ -12,28 +11,7 @@ app.use(express.static('build'))
 morgan.token('post',(req,res) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post'))
 
-const url = process.env.MONGODB_URL
-mongoose.connect(url,{useNewUrlParser: true, useUnifiedTopology: true,useFindAndModify: false,useCreateIndex: true})
-.then(result => {
-  console.log('connected to mongoDB')
-})
-.catch(error => {
-  console.log(error.message)
-})
 
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
-})
-
-const Person = mongoose.model('Person',personSchema)
-personSchema.set('toJSON',{
-  transform: (document,returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-  }
-})
 let persons = [
   {
       "name": "Arti Hellas",
@@ -118,7 +96,7 @@ app.post('/api/persons',(request,response) => {
   response.json(note)
 })
 
-const PORT = process.env.PORT 
+const PORT = process.env.PORT
 app.listen(PORT,() => {
   console.log(`Server running on port ${PORT}`)
 })
