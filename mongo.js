@@ -36,10 +36,10 @@ else if(process.argv.length === 3)
 
   const url = `mongodb+srv://foolhardy21:${password}@cluster0.fafup.mongodb.net/phonebook-app?retryWrites=true&w=majority`
   mongoose.connect(url,{useNewUrlParser: true, useUnifiedTopology: true,useFindAndModify: false,useCreateIndex: true})
-
+  console.log('phonebook:')
   Person.find({}).then(result => {
     result.forEach(person => {
-        console.log(person)
+        console.log(person.name,person.number)
     })
     mongoose.connection.close()
   })
