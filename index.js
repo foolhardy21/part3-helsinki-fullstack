@@ -12,6 +12,14 @@ app.use(express.static('build'))
 morgan.token('post',(req,res) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post'))
 
+const errorHandler = (error,request,response,next) => {
+  console.log(error.message)
+  if(error.name === 'CastError')
+  {
+    return response.status(400).json({error:'Person not found'})
+  }
+  next(error)
+}
 
 let persons = [
   {
@@ -54,24 +62,23 @@ app.get('/api/persons/info',(request,response) => {
   })
 })
 
-app.get('/api/persons/:id',(request,response) => {
+app.get('/api/persons/:id',(request,response,next) => {
   const id = request.params.id
   Person.findById(id).then(person => {
     response.send(`${person.name} ${person.number}`)
   })
+  .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id',(request,response) => {
+app.delete('/api/persons/:id',(request,response,next) => {
   const id = request.params.id
   Person.findByIdAndRemove(id)
   .then(result => {
     response.status(204).end()
   })
-  .catch(error => {
-    response.status(204).json({error:'person not found'})
-  })
-
+  .catch(error => next(error))
 })
+app.use(errorHandler)
 
 app.post('/api/persons',(request,response) => {
   const person = request.body
