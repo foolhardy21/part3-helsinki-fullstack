@@ -14,9 +14,11 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :p
 
 const errorHandler = (error,request,response,next) => {
   console.log(error.message)
-  if(error.name === 'CastError')
-  {
+  if(error.name === 'CastError'){
     return response.status(400).json({error:'Person not found'})
+  }
+  else if(error.name === 'ValidationError'){
+    return response.status(400).json({error:error.message})
   }
   next(error)
 }
@@ -91,34 +93,21 @@ app.put('/api/persons/:id',(request,response,next) => {
   })
   .catch(error => next(error))
 })
-app.use(errorHandler)
 
-app.post('/api/persons',(request,response) => {
+app.post('/api/persons',(request,response,next) => {
   const person = request.body
-  if(!person)
-  {
-    return response.status(400).json({
-      error: 'body missing'
-    })
-  }
-  if(person.name === "" || person. number === "")
-  {
-    return response.status(404).json({
-      error: 'data missing'
-    })
-  }
 
   const personObject = new Person({
     name: person.name,
     number: person.number,
   })
-  personObject.save().then(savedNote => {
-      persons.concat(savedNote)
-      response.json(savedNote)
+  personObject.save().then(savedPerson => {
+      persons.concat(savedPerson)
+      response.json(savedPerson)
   })
-
-
+  .catch(error => next(error))
 })
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT,() => {

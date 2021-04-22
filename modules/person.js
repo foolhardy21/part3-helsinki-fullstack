@@ -13,8 +13,11 @@ mongoose.connect(url,{useNewUrlParser: true, useUnifiedTopology: true,useFindAnd
 })
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {type:String,
+    required:true,
+  unique:true},
+  number: {type:String,
+  required:true},
 })
 
 const Person = mongoose.model('Person',personSchema)
