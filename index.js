@@ -58,14 +58,14 @@ app.get('/api/persons',(request, response) => {
 app.get('/api/persons/info',(request,response) => {
   const time = new Date()
   Person.find({}).then(persons => {
-    response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${time}</p>`)
+    response.send(`<p>Phonebook has info for ${persons.length} people</p><div>${time}</div>`)
   })
 })
 
 app.get('/api/persons/:id',(request,response,next) => {
   const id = request.params.id
   Person.findById(id).then(person => {
-    response.send(`${person.name} ${person.number}`)
+    response.json(person)
   })
   .catch(error => next(error))
 })
