@@ -2,7 +2,10 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./modules/person')
-require('dotenv').config()
+if(process.env.NODE_ENV !== 'production'){
+    require('dotenv').config()
+}
+
 
 const app = express()
 app.use(express.json())
@@ -23,7 +26,7 @@ const errorHandler = (error,request,response,next) => {
   next(error)
 }
 
-let persons = [
+/*let persons = [
   {
       "name": "Arti Hellas",
       "number": "040-44-1234567",
@@ -49,7 +52,7 @@ let persons = [
       "number": "067-98-198567",
       "id": 5
     }
-]
+]*/
 
 app.get('/api/persons',(request, response) => {
   Person.find({}).then(persons => {
